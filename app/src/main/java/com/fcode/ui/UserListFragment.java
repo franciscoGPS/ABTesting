@@ -36,6 +36,11 @@ public class UserListFragment extends ItemListFragment<User> {
     }
 
     @Override
+    protected void newServiceOrder() {
+
+    }
+
+    @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -103,7 +108,7 @@ public class UserListFragment extends ItemListFragment<User> {
 
     @Override
     protected int getErrorMessage(final Exception exception) {
-        return R.string.error_loading_users;
+        return R.string.error_loading_sos;
     }
 
     @Override

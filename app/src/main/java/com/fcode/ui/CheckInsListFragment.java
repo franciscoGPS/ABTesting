@@ -3,7 +3,6 @@ package com.fcode.ui;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.content.Intent;
-
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
@@ -16,7 +15,6 @@ import com.fcode.R;
 import com.fcode.authenticator.LogoutService;
 import com.fcode.core.CheckIn;
 import com.fcode.util.SingleTypeAdapter;
-
 
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +30,11 @@ public class CheckInsListFragment extends ItemListFragment<CheckIn> {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BootstrapApplication.component().inject(this);
+    }
+
+    @Override
+    protected void newServiceOrder() {
+
     }
 
     @Override

@@ -1,12 +1,12 @@
 package com.fcode.core;
 
-import java.util.List;
-
-import retrofit2.Callback;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 
 /**
@@ -14,18 +14,13 @@ import retrofit2.http.POST;
  */
 public interface ServiceOrdersService {
     @GET(Constants.Http.API_URL+Constants.Http.URL_SERVICE_ORDERS)
-    List<ServiceOrder> getServiceOrders();
+    Call<ResponseBody> getServiceOrders();
 
-    /**
-     * The {@link retrofit2.http} values will be transform into query string paramters
-     * via Retrofit
-     *
-     * @param email The users email
-     * @param password The users password
-     * @return A login response.
-     */
-    @FormUrlEncoded
-    @POST(Constants.Http.URL_AUTH)
-    void authenticate(@Field(Constants.Http.PARAM_USERNAME) String email,
-                      @Field(Constants.Http.PARAM_PASSWORD) String password, Callback<User> userCallback);
+    @POST(Constants.Http.API_URL+ Constants.Http.URL_SERVICE_ORDERS)
+    Call<ResponseBody> newServiceOrder(@Body ServiceOrder serviceOrder);
+
+
+    @PATCH(Constants.Http.API_URL+Constants.Http.URL_SERVICE_ORDERS+"/{id}")
+    Call<ResponseBody> updateServiceOrder(@Path("id") int serviceOrderId,@Body ServiceOrder serviceOrder);
+
 }

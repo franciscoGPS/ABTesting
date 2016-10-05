@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-
 import com.fcode.R;
 
 /**
@@ -32,7 +31,7 @@ public class BootstrapPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 1;
     }
 
     @Override
@@ -40,18 +39,15 @@ public class BootstrapPagerAdapter extends FragmentPagerAdapter {
         final Fragment result;
         switch (position) {
             case 0:
-                result = new NewsListFragment();
-                break;
-            case 1:
                 result = new ServiceOrderListFragment();
 
                 break;
+            /*case 1:
+                result = new NewsListFragment();
+                break;
             case 2:
                 result = new CheckInsListFragment();
-                break;
-            case 3:
-                result = new UserListFragment();
-                break;
+                break;*/
             default:
                 result = null;
                 break;
@@ -66,15 +62,16 @@ public class BootstrapPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(final int position) {
         switch (position) {
             case 0:
-                return resources.getString(R.string.page_news);
-            case 1:
                 return resources.getString(R.string.page_service_orders);
+
+            /*case 1:
+                return resources.getString(R.string.page_news);
             case 2:
-                return resources.getString(R.string.page_checkins);
-            case 3:
-                return resources.getString(R.string.page_users);
+                return resources.getString(R.string.page_checkins);*/
             default:
                 return null;
         }
     }
+
+
 }

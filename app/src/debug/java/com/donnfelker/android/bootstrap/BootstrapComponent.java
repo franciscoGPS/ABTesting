@@ -1,19 +1,18 @@
 package com.fcode;
 
-import com.fcode.AndroidModule;
-import com.fcode.BootstrapApplication;
-import com.fcode.BootstrapModule;
 import com.fcode.authenticator.BootstrapAuthenticatorActivity;
 import com.fcode.core.BootstrapService;
 import com.fcode.core.TimerService;
 import com.fcode.ui.BootstrapActivity;
 import com.fcode.ui.BootstrapFragmentActivity;
 import com.fcode.ui.BootstrapTimerActivity;
+import com.fcode.ui.CarouselFragment;
 import com.fcode.ui.CheckInsListFragment;
 import com.fcode.ui.MainActivity;
 import com.fcode.ui.NavigationDrawerFragment;
 import com.fcode.ui.NewsActivity;
 import com.fcode.ui.NewsListFragment;
+import com.fcode.ui.ServiceOrderFragment;
 import com.fcode.ui.ServiceOrderListFragment;
 import com.fcode.ui.UserActivity;
 import com.fcode.ui.UserListFragment;
@@ -32,6 +31,8 @@ import dagger.Component;
 public interface BootstrapComponent {
 
     void inject(BootstrapApplication target);
+
+
 
     void inject(BootstrapAuthenticatorActivity target);
 
@@ -55,10 +56,12 @@ public interface BootstrapComponent {
 
     void inject(BootstrapFragmentActivity target);
     void inject(BootstrapActivity target);
-
+    void inject(CarouselFragment target);
+    void inject (ServiceOrderListFragment target);
+    void inject (ServiceOrderFragment fragment);
     void inject(BootstrapService service);
     //void inject(RestAdapterRequestInterceptor interceptor);
-    void inject (ServiceOrderListFragment target);
+
 
 
 

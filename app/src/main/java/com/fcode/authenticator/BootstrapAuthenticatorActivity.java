@@ -342,6 +342,7 @@ public class BootstrapAuthenticatorActivity extends ActionBarAccountAuthenticato
         intent.putExtra(KEY_ACCOUNT_NAME, email);
         intent.putExtra(KEY_ACCOUNT_TYPE, Constants.Auth.BOOTSTRAP_ACCOUNT_TYPE);
 
+
         if (authTokenType != null
                 && authTokenType.equals(Constants.Auth.AUTHTOKEN_TYPE)) {
 

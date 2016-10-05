@@ -11,6 +11,13 @@
     </item>
 
     <item
+        android:id="@+id/new_service_order"
+        android:icon="@drawable/ic_action_timer"
+        android:showAsAction="always"
+        android:title="@string/title_new_vehicle">
+    </item>
+
+    <item
         android:id="@+id/timer"
         android:icon="@drawable/ic_action_timer"
         android:showAsAction="always"

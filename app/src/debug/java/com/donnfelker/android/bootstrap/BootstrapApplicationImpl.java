@@ -8,6 +8,8 @@ public class BootstrapApplicationImpl extends BootstrapApplication {
     @Override
     protected void onAfterInjection() {
 
+
+
     }
 
     @Override

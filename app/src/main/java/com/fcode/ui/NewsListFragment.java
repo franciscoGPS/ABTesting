@@ -37,6 +37,11 @@ public class NewsListFragment extends ItemListFragment<News> {
     }
 
     @Override
+    protected void newServiceOrder() {
+
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 

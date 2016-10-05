@@ -45,7 +45,7 @@ public final class Constants {
          * Base URL for all requests
          */
         //public static final String URL_BASE = "https://flash-staging.herokuapp.com";
-        public static final String URL_BASE = "http://192.168.15.7:3001";
+        public static final String URL_BASE = "http://192.168.15.9:3001";
 
         /*
         * Api URL
@@ -56,6 +56,7 @@ public final class Constants {
          * URL Service Orders
          * */
         public static final String URL_SERVICE_ORDERS = "/service_orders";
+
 
         /**
          * Authentication URL
@@ -101,6 +102,15 @@ public final class Constants {
          */
         public static final String PARAM_USERNAME = "email";
         public static final String PARAM_PASSWORD = "password";
+
+        /*
+        *   List of car makes and models
+        */
+        public static final String URL_GET_CAR_MAKES = "/get_car_makes";
+        public static final String URL_GET_CAR_MODELS = "/get_car_models";
+        public static final String QUERY_PARAM = "q";
+        public static final String MAKES_SET = "makes_set";
+
 
 
 
