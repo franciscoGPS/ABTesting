@@ -6,9 +6,12 @@ import android.accounts.OperationCanceledException;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -18,10 +21,14 @@ import com.fcode.BootstrapApplication;
 import com.fcode.BootstrapServiceProvider;
 import com.fcode.R;
 import com.fcode.core.BootstrapService;
+import com.fcode.core.ServiceOrder;
 import com.fcode.events.NavItemSelectedEvent;
 import com.fcode.util.SafeAsyncTask;
 import com.fcode.util.UIUtils;
 import com.squareup.otto.Subscribe;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -209,4 +216,39 @@ public class MainActivity extends BootstrapActivity {
                 break;
         }
     }
+
+    @Subscribe
+    public void onUserAuthenticated( ArrayList<ServiceOrder> serviceOrderList) {
+        Log.d("FCM", "Debug: " + serviceOrderList.toString());
+
+
+        List<Fragment> allFragments = getSupportFragmentManager().getFragments();
+        if(allFragments != null){
+            for (Fragment fragment : allFragments) {
+                if (fragment instanceof CarouselFragment ) {
+                    CarouselFragment carouselFragment = (CarouselFragment) fragment;
+
+                    ViewPager viewPager =  carouselFragment.pager;
+
+                    BootstrapPagerAdapter bootstrapPagerAdapter = (BootstrapPagerAdapter) viewPager.getAdapter();
+
+                    ServiceOrderListFragment solf =  (ServiceOrderListFragment)bootstrapPagerAdapter.getItem(1);
+                    //solf.updateList(serviceOrderList);
+                    //solf.onLoadFinished(new Loader<List<ServiceOrder>>(getApplicationContext()), serviceOrderList);
+                    bootstrapPagerAdapter.notifyDataSetChanged();
+
+
+                }
+            }
+        }
+
+
+
+
+
+
+        //updateList(serviceOrderList);
+    }
+
+
 }

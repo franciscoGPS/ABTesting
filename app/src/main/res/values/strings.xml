@@ -8,14 +8,16 @@
     <string name="refresh_action">Refresh</string>
     <string name="logout_action">Logout</string>
     <string name="page_news">News</string>
+    <string name="page_service_order">Service Order</string>
     <string name="page_users">Users</string>
     <string name="page_service_orders">Service Orders</string>
     <string name="page_checkins">Check In\'s</string>
     <string name="title_column">Title</string>
     <string name="location_column">Location</string>
     <string name="user_column">User</string>
+    <string name="so_column">S.O.</string>
     <string name="date_column">Date</string>
-    <string name="error_loading_users">Loading users failed</string>
+    <string name="error_loading_sos">Loading service orders failed</string>
     <string name="error_loading_news">Loading news failed</string>
     <string name="error_loading_checkins">Loading check-ins failed</string>
     <string name="no_service_orders">No Service Orders</string>
@@ -39,11 +41,14 @@
     <string name="start">Start</string>
     <string name="pause">Pause</string>
     <string name="resume">Resume</string>
+    <string name="title_new_vehicle">New Vehicle</string>
     <string name="title_timer">Timer</string>
     <string name="home">Home</string>
     <string name="navigation_drawer_open">Drawer Open</string>
     <string name="navigation_drawer_close">Drawer Close</string>
     <string name="title_home">Home</string>
+
+    <string name="successfull_so_created">Vehículo registrado correctamente.</string>
 
 
 </resources>

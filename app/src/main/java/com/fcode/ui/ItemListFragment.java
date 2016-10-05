@@ -88,7 +88,10 @@ public abstract class ItemListFragment<E> extends Fragment
             setListShown(true, false);
         }
 
+
         getLoaderManager().initLoader(0, null, this);
+
+
     }
 
     @Override
@@ -161,6 +164,9 @@ public abstract class ItemListFragment<E> extends Fragment
             case id.refresh:
                 forceRefresh();
                 return true;
+            case id.new_service_order:
+                newServiceOrder();
+                return true;
             case R.id.logout:
                 logout();
                 return true;
@@ -169,6 +175,7 @@ public abstract class ItemListFragment<E> extends Fragment
         }
     }
 
+    protected abstract void newServiceOrder();
     protected abstract LogoutService getLogoutService();
 
     private void logout() {
@@ -203,6 +210,8 @@ public abstract class ItemListFragment<E> extends Fragment
             return;
         }
 
+
+
         getActivity().setProgressBarIndeterminateVisibility(true);
 
         getLoaderManager().restartLoader(0, args, this);
@@ -228,8 +237,10 @@ public abstract class ItemListFragment<E> extends Fragment
         }
 
         this.items = items;
-        getListAdapter().getWrappedAdapter().setItems(items.toArray());
-        showList();
+        if(items != null && items.size() > 0) {
+            getListAdapter().getWrappedAdapter().setItems(items.toArray());
+            showList();
+        }
     }
 
     /**
@@ -330,6 +341,12 @@ public abstract class ItemListFragment<E> extends Fragment
             listView.setAdapter(adapter);
         }
         return this;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        this.getListAdapter().notifyDataSetChanged();
     }
 
     private ItemListFragment<E> fadeIn(final View view, final boolean animate) {

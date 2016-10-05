@@ -36,8 +36,10 @@ public class BootstrapServiceProviderImpl implements BootstrapServiceProvider {
     @Override
     public BootstrapService getService(final Activity activity)
             throws IOException, AccountsException {
+
         // The call to keyProvider.getAuthKey(...) is what initiates the login screen. Call that now.
-        keyProvider.getAuthKey(activity);
+        //If getAuthKey function throws an AccountsException, will be caught and redirected to login screen.
+        String authKey = keyProvider.getAuthKey(activity);
 
         return new BootstrapService(restAdapter);
     }

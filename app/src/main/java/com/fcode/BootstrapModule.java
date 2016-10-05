@@ -16,6 +16,7 @@ import com.fcode.core.RestAdapterRequestInterceptor;
 import com.fcode.core.RestErrorHandler;
 import com.fcode.core.User;
 import com.fcode.core.UserAgentProvider;
+import com.fcode.ui.MainActivity;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.squareup.otto.Bus;
@@ -93,6 +94,11 @@ public class BootstrapModule {
     @Provides
     RestErrorHandler provideRestErrorHandler(Bus bus) {
         return new RestErrorHandler(bus);
+    }
+
+    @Provides
+    MainActivity providesPermittedActivity(){
+        return new MainActivity();
     }
 
     @Provides

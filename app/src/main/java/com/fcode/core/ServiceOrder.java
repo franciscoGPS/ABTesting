@@ -9,6 +9,7 @@ import java.util.Date;
  */
 public class ServiceOrder implements Serializable {
 
+    private Integer id;
     private String   description;
     private Date date_in;
     private Date     date_out;
@@ -55,8 +56,10 @@ public class ServiceOrder implements Serializable {
     private Boolean  cc;
     private Integer  customer_id;
     private String   plate;
+    private Customer customer;
 
-    public ServiceOrder(String description, Date date_in, Date date_out, Timestamp created_at, Timestamp updated_at, Timestamp deleted_at, Integer user_id, String color, String service_request, String make, String model, Integer year, Boolean win_one, Boolean win_two, Boolean win_three, Boolean win_four, Boolean dl_one, Boolean dl_two, Boolean dl_three, Boolean dl_four, Boolean ft, Boolean ab, Boolean hag, Boolean li, Boolean avna, Boolean hn, Boolean sj, Boolean abs, Boolean sa, Boolean gmg, Boolean fe, Boolean air_bag, Boolean sayda, Boolean lff, Boolean casc, Boolean ses, Boolean sm, Boolean na, Boolean ac, Boolean dx, Boolean sc, Boolean bpa, Boolean af, Boolean cc, Integer customer_id, String plate) {
+    public ServiceOrder(Customer customer, int id, String description, Date date_in, Date date_out, Timestamp created_at, Timestamp updated_at, Timestamp deleted_at, Integer user_id, String color, String service_request, String make, String model, Integer year, Boolean win_one, Boolean win_two, Boolean win_three, Boolean win_four, Boolean dl_one, Boolean dl_two, Boolean dl_three, Boolean dl_four, Boolean ft, Boolean ab, Boolean hag, Boolean li, Boolean avna, Boolean hn, Boolean sj, Boolean abs, Boolean sa, Boolean gmg, Boolean fe, Boolean air_bag, Boolean sayda, Boolean lff, Boolean casc, Boolean ses, Boolean sm, Boolean na, Boolean ac, Boolean dx, Boolean sc, Boolean bpa, Boolean af, Boolean cc, Integer customer_id, String plate) {
+        this.id = id;
         this.description = description;
         this.date_in = date_in;
         this.date_out = date_out;
@@ -102,10 +105,14 @@ public class ServiceOrder implements Serializable {
         this.af = af;
         this.cc = cc;
         this.customer_id = customer_id;
+        this.customer = customer;
         this.plate = plate;
+
+
     }
 
     public ServiceOrder() {
+        this.id = 0;
         this.description = "";
         this.date_in = null;
         this.date_out = null;
@@ -152,6 +159,15 @@ public class ServiceOrder implements Serializable {
         this.cc = false;
         this.customer_id = 0;
         this.plate = "";
+        this.customer = new Customer();
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getDescription() {
@@ -520,5 +536,13 @@ public class ServiceOrder implements Serializable {
 
     public void setPlate(String plate) {
         this.plate = plate;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 }
