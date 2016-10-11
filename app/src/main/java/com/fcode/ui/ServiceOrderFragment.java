@@ -6,9 +6,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -20,19 +23,24 @@ import com.fcode.BootstrapServiceProvider;
 import com.fcode.R;
 import com.fcode.core.Customer;
 import com.fcode.core.ServiceOrder;
+import com.fcode.core.User;
 import com.fcode.util.Toaster;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static com.fcode.core.Constants.Auth.USER_ID;
 import static com.fcode.core.Constants.Extra.SERVICE_ORDER;
 import static com.fcode.core.Constants.Http.MAKES_SET;
 
@@ -60,6 +68,7 @@ public class ServiceOrderFragment extends Fragment {
     @Bind(R.id.et_cust_cellphone) protected EditText etCustCellPhone;
     @Bind(R.id.et_cust_phone) protected EditText etCustPhone;
     @Bind(R.id.et_model) protected EditText etModel;
+    @Bind(R.id.et_color) protected EditText etColor;
     @Bind(R.id.et_year) protected EditText etYear;
     @Bind(R.id.et_plate) protected EditText etPlate;
     @Bind(R.id.et_symptom) protected EditText etSymptom;
@@ -105,7 +114,26 @@ public class ServiceOrderFragment extends Fragment {
 
     private ArrayAdapter<String> makesAdapter;
 
-    private ServiceOrder serviceOrder;
+    private ServiceOrder mServiceOrder;
+
+    private User user;
+
+    private final TextWatcher watcher = validationTextWatcher();
+
+    private TextWatcher validationTextWatcher() {
+        return new TextWatcherAdapter() {
+            public void afterTextChanged(final Editable gitDirEditText) {
+                updateUIWithValidation();
+            }
+
+        };
+    }
+
+    private void updateUIWithValidation() {
+        final boolean populated = isEmailValid(etCustEmail.getText().toString());
+        saveServiceOrder.setEnabled(populated);
+    }
+
 
 
     @Override
@@ -115,6 +143,8 @@ public class ServiceOrderFragment extends Fragment {
         ButterKnife.bind(this, view);
         BootstrapApplication.component().inject(this);
         return view;
+
+
     }
 
 
@@ -132,167 +162,225 @@ public class ServiceOrderFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
 
-        serviceOrder = (ServiceOrder) getArguments().getSerializable(SERVICE_ORDER);
+        mServiceOrder = (ServiceOrder) getArguments().getSerializable(SERVICE_ORDER );
 
-            /*Picasso.with(this).load(user.getAvatarUrl())
-                .placeholder(R.drawable.gravatar_icon)
-                .into(avatar);*/
 
-        etCustName.setText(serviceOrder.getCustomer().getName());
-        etCustLastName.setText(serviceOrder.getCustomer().getLast_name());
-        etCustPhone.setText(serviceOrder.getCustomer().getPhone_number());
-        etCustCellPhone.setText(serviceOrder.getCustomer().getCellphone());
-        etCustEmail.setText(serviceOrder.getCustomer().getEmail());
-        etModel.setText(serviceOrder.getModel());
-        if (serviceOrder.getYear() == 0){
+
+
+
+        etCustName.setText(mServiceOrder.getCustomer().getName());
+        etCustLastName.setText(mServiceOrder.getCustomer().getLast_name());
+        etCustPhone.setText(mServiceOrder.getCustomer().getPhone_number());
+        etCustCellPhone.setText(mServiceOrder.getCustomer().getCellphone());
+        etCustEmail.setText(mServiceOrder.getCustomer().getEmail());
+        etModel.setText(mServiceOrder.getModel());
+        etColor.setText(mServiceOrder.getColor());
+        if (mServiceOrder.getYear() == 0){
             etYear.setText("");
         }else {
-            etYear.setText(serviceOrder.getYear().toString());
+            etYear.setText(mServiceOrder.getYear().toString());
         }
 
-        etPlate.setText(serviceOrder.getPlate());
-        etSymptom.setText(serviceOrder.getService_request());
+        etPlate.setText(mServiceOrder.getPlate());
+        etSymptom.setText(mServiceOrder.getService_request());
 
 
 
-        win_one.setChecked(serviceOrder.getWin_one());
-        win_two.setChecked(serviceOrder.getWin_two());
-        win_three.setChecked(serviceOrder.getWin_three());
-        win_four.setChecked(serviceOrder.getWin_four());
-        dl_one.setChecked(serviceOrder.getDl_one());
-        dl_two.setChecked(serviceOrder.getDl_two());
-        dl_three.setChecked(serviceOrder.getDl_three());
-        dl_four.setChecked(serviceOrder.getDl_four());
+        win_one.setChecked(mServiceOrder.getWin_one());
+        win_two.setChecked(mServiceOrder.getWin_two());
+        win_three.setChecked(mServiceOrder.getWin_three());
+        win_four.setChecked(mServiceOrder.getWin_four());
+        dl_one.setChecked(mServiceOrder.getDl_one());
+        dl_two.setChecked(mServiceOrder.getDl_two());
+        dl_three.setChecked(mServiceOrder.getDl_three());
+        dl_four.setChecked(mServiceOrder.getDl_four());
         //ft,ab,hag,li,avna,hn,sj,abs,sa,gmg,fe,air_bag,sayda,lff,casc,ses,sm,na,ac,dx,sc,bpa,af,cc
-        ft.setChecked(serviceOrder.getFt());
-        ab.setChecked(serviceOrder.getAb());
-        hag.setChecked(serviceOrder.getHag());
-        li.setChecked(serviceOrder.getLi());
-        avna.setChecked(serviceOrder.getAvna());
-        hn.setChecked(serviceOrder.getHn());
-        sj.setChecked(serviceOrder.getSj());
-        abs.setChecked(serviceOrder.getAbs());
-        sa.setChecked(serviceOrder.getSa());
-        gmg.setChecked(serviceOrder.getGmg());
-        fe.setChecked(serviceOrder.getFe());
-        air_bag.setChecked(serviceOrder.getAir_bag());
-        sayda.setChecked(serviceOrder.getSayda());
-        lff.setChecked(serviceOrder.getLff());
-        casc.setChecked(serviceOrder.getCasc());
-        ses.setChecked(serviceOrder.getSes());
-        sm.setChecked(serviceOrder.getSm());
-        na.setChecked(serviceOrder.getNa());
-        ac.setChecked(serviceOrder.getAc());
-        dx.setChecked(serviceOrder.getDx());
-        sc.setChecked(serviceOrder.getSc());
-        bpa.setChecked(serviceOrder.getBpa());
-        af.setChecked(serviceOrder.getAf());
-        cc.setChecked(serviceOrder.getCc());
+        ft.setChecked(mServiceOrder.getFt());
+        ab.setChecked(mServiceOrder.getAb());
+        hag.setChecked(mServiceOrder.getHag());
+        li.setChecked(mServiceOrder.getLi());
+        avna.setChecked(mServiceOrder.getAvna());
+        hn.setChecked(mServiceOrder.getHn());
+        sj.setChecked(mServiceOrder.getSj());
+        abs.setChecked(mServiceOrder.getAbs());
+        sa.setChecked(mServiceOrder.getSa());
+        gmg.setChecked(mServiceOrder.getGmg());
+        fe.setChecked(mServiceOrder.getFe());
+        air_bag.setChecked(mServiceOrder.getAir_bag());
+        sayda.setChecked(mServiceOrder.getSayda());
+        lff.setChecked(mServiceOrder.getLff());
+        casc.setChecked(mServiceOrder.getCasc());
+        ses.setChecked(mServiceOrder.getSes());
+        sm.setChecked(mServiceOrder.getSm());
+        na.setChecked(mServiceOrder.getNa());
+        ac.setChecked(mServiceOrder.getAc());
+        dx.setChecked(mServiceOrder.getDx());
+        sc.setChecked(mServiceOrder.getSc());
+        bpa.setChecked(mServiceOrder.getBpa());
+        af.setChecked(mServiceOrder.getAf());
+        cc.setChecked(mServiceOrder.getCc());
 
 
 
 
-        saveServiceOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        saveServiceOrder.setOnClickListener(saveClickListener);
 
-                if(serviceOrder != null){
+        cancelBtn.setOnClickListener(cancelClickListener);
 
-                    serviceOrder.setWin_one(win_one.isChecked());
-                    serviceOrder.setWin_two(win_two.isChecked());
-                    serviceOrder.setWin_three(win_three.isChecked());
-                    serviceOrder.setWin_four(win_four.isChecked());
-                    serviceOrder.setDl_one(dl_one.isChecked());
-                    serviceOrder.setDl_two(dl_two.isChecked());
-                    serviceOrder.setDl_three(dl_three.isChecked());
-                    serviceOrder.setDl_four(dl_four.isChecked());
-                    serviceOrder.setFt(ft.isChecked());
-                    serviceOrder.setAb(ab.isChecked());
-                    serviceOrder.setHag(hag.isChecked());
-                    serviceOrder.setLi(li.isChecked());
-                    serviceOrder.setAvna(avna.isChecked());
-                    serviceOrder.setHn(hn.isChecked());
-                    serviceOrder.setSj(sj.isChecked());
-                    serviceOrder.setAbs(abs.isChecked());
-                    serviceOrder.setSa(sa.isChecked());
-                    serviceOrder.setGmg(gmg.isChecked());
-                    serviceOrder.setFe(fe.isChecked());
-                    serviceOrder.setAir_bag(air_bag.isChecked());
-                    serviceOrder.setSayda(sayda.isChecked());
-                    serviceOrder.setLff(lff.isChecked());
-                    serviceOrder.setCasc(casc.isChecked());
-                    serviceOrder.setSes(ses.isChecked());
-                    serviceOrder.setSm(sm.isChecked());
-                    serviceOrder.setNa(na.isChecked());
-                    serviceOrder.setAc(ac.isChecked());
-                    serviceOrder.setDx(dx.isChecked());
-                    serviceOrder.setSc(sc.isChecked());
-                    serviceOrder.setBpa(bpa.isChecked());
-                    serviceOrder.setAf(af.isChecked());
-                    serviceOrder.setCc(cc.isChecked());
-
-                    serviceOrder.getCustomer().setName(etCustName.getText().toString());
-                    serviceOrder.getCustomer().setLast_name(etCustLastName.getText().toString());
-                    serviceOrder.getCustomer().setPhone_number(etCustPhone.getText().toString());
-                    serviceOrder.getCustomer().setCellphone(etCustCellPhone.getText().toString());
-                    serviceOrder.getCustomer().setEmail(etCustEmail.getText().toString());
-                    serviceOrder.setModel(etModel.getText().toString());
-                    serviceOrder.setYear(Integer.valueOf(etYear.getText().toString()));
-                    serviceOrder.setPlate(etPlate.getText().toString());
-                    serviceOrder.setService_request(etSymptom.getText().toString());
-                    serviceOrder.setMake(spinnerMakes.getSelectedItem().toString());
-
-                    Customer newCustomer = new Customer();
-
-
-
-
-                SaveServiceOrder saveSO = new SaveServiceOrder();
-                    Boolean create = false;
-                    if(serviceOrder.getId() == 0 ){
-                        create = true;
-                    }
-                    saveSO.execute(serviceOrder, create);
-                }else {
-                    returnToFragmentList(null);
-                }
-            }
-        });
-
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                returnToFragmentList(null);
-            }
-        });
+        user = new User();
+               user.setId(sharedPreferences.getInt(USER_ID, 0));
 
         Set<String> set = sharedPreferences.getStringSet(MAKES_SET, null);
-        makes = new ArrayList<>(set);
-        if (makes == null) {
-            VehicleData getvehiclesData = new VehicleData();
-            getvehiclesData.execute("");
+
+        if (set !=  null) { //TODO: Add new criteria to eventually reload new models.
+            makes = new ArrayList<>(set);
+            Collections.sort(makes);
+            setMakesAdapter(makes);
         }else
         {
-            setMakesAdapter();
+            VehicleData getvehiclesData = new VehicleData();
+            getvehiclesData.execute("");
         }
 
-        spinnerMakes.setSelection(getIndex(spinnerMakes, serviceOrder.getMake()));
+        spinnerMakes.setSelection(getIndex(spinnerMakes, mServiceOrder.getMake()));
 
+        if(etCustName.requestFocus()) {
+            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        }
+
+        etCustEmail.addTextChangedListener(watcher);
 
     }
     //private method of your class
-    private int getIndex(Spinner spinner, String myString)
+    private int getIndex(Spinner spinner, String itemName)
     {
         int index = 0;
 
         for (int i=0;i<spinner.getCount();i++){
-            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(myString)){
+            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(itemName)){
                 index = i;
                 break;
             }
         }
         return index;
     }
+
+    private View.OnClickListener cancelClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            returnToFragmentList(null);
+        }
+    };
+
+    private View.OnClickListener saveClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+
+            if(etCustName.getText().toString().trim().length() > 0 &&
+                    etCustLastName.getText().toString().trim().length() > 0 &&
+            //etCustEmail.getText().toString().trim().length() > 0 &&
+            etCustCellPhone.getText().toString().trim().length() > 0 &&
+                    etColor.getText().toString().trim().length() > 0 &&
+                    etYear.getText().toString().trim().length() > 0 &&
+                    etModel.getText().toString().trim().length() > 0 ) {
+
+                if((win_one.isChecked() == true         || win_two.isChecked() == true  ||
+                        win_three.isChecked() == true   || win_four.isChecked() == true ||
+                        dl_one.isChecked() == true      || dl_two.isChecked() == true   ||
+                        dl_three.isChecked() == true    || dl_four.isChecked() == true  ||
+                        ft.isChecked() == true          || ab.isChecked() == true       ||
+                        hag.isChecked() == true         || li.isChecked() == true       ||
+                        avna.isChecked() == true        || hn.isChecked() == true       ||
+                        sj.isChecked() == true          || abs.isChecked() == true      ||
+                        sa.isChecked() == true          || gmg.isChecked() == true      ||
+                        fe.isChecked() == true          || air_bag.isChecked() == true  ||
+                        sayda.isChecked() == true       || lff.isChecked() == true      ||
+                        casc.isChecked() == true        || ses.isChecked() == true      ||
+                        sm.isChecked() == true          || na.isChecked() == true       ||
+                        ac.isChecked() == true          || dx.isChecked() == true       ||
+                        sc.isChecked() == true          || bpa.isChecked() == true      ||
+                        af.isChecked() == true          || cc.isChecked() == true)
+                        || etSymptom.getText().toString().trim().length() > 0) {
+
+                    if (mServiceOrder != null) {
+
+
+                        Customer customer = mServiceOrder.getCustomer();
+
+                        mServiceOrder.setWin_one(win_one.isChecked());
+                        mServiceOrder.setWin_two(win_two.isChecked());
+                        mServiceOrder.setWin_three(win_three.isChecked());
+                        mServiceOrder.setWin_four(win_four.isChecked());
+                        mServiceOrder.setDl_one(dl_one.isChecked());
+                        mServiceOrder.setDl_two(dl_two.isChecked());
+                        mServiceOrder.setDl_three(dl_three.isChecked());
+                        mServiceOrder.setDl_four(dl_four.isChecked());
+                        mServiceOrder.setFt(ft.isChecked());
+                        mServiceOrder.setAb(ab.isChecked());
+                        mServiceOrder.setHag(hag.isChecked());
+                        mServiceOrder.setLi(li.isChecked());
+                        mServiceOrder.setAvna(avna.isChecked());
+                        mServiceOrder.setHn(hn.isChecked());
+                        mServiceOrder.setSj(sj.isChecked());
+                        mServiceOrder.setAbs(abs.isChecked());
+                        mServiceOrder.setSa(sa.isChecked());
+                        mServiceOrder.setGmg(gmg.isChecked());
+                        mServiceOrder.setFe(fe.isChecked());
+                        mServiceOrder.setAir_bag(air_bag.isChecked());
+                        mServiceOrder.setSayda(sayda.isChecked());
+                        mServiceOrder.setLff(lff.isChecked());
+                        mServiceOrder.setCasc(casc.isChecked());
+                        mServiceOrder.setSes(ses.isChecked());
+                        mServiceOrder.setSm(sm.isChecked());
+                        mServiceOrder.setNa(na.isChecked());
+                        mServiceOrder.setAc(ac.isChecked());
+                        mServiceOrder.setDx(dx.isChecked());
+                        mServiceOrder.setSc(sc.isChecked());
+                        mServiceOrder.setBpa(bpa.isChecked());
+                        mServiceOrder.setAf(af.isChecked());
+                        mServiceOrder.setCc(cc.isChecked());
+
+                        customer.setName(etCustName.getText().toString().trim());
+                        customer.setLast_name(etCustLastName.getText().toString().trim());
+                        customer.setPhone_number(etCustPhone.getText().toString().trim());
+                        customer.setCellphone(etCustCellPhone.getText().toString().trim());
+                        customer.setEmail(etCustEmail.getText().toString().trim());
+                        customer.setUser_id(user.getId());
+
+
+                        mServiceOrder.setModel(etModel.getText().toString().trim());
+                        mServiceOrder.setYear(Integer.valueOf(etYear.getText().toString().trim()));
+                        mServiceOrder.setPlate(etPlate.getText().toString().trim());
+                        mServiceOrder.setService_request(etSymptom.getText().toString().trim());
+                        mServiceOrder.setMake(spinnerMakes.getSelectedItem().toString().trim());
+                        mServiceOrder.setColor(etColor.getText().toString().trim());
+                        mServiceOrder.setCustomer_id(customer.getId());
+                        mServiceOrder.setUser_id(user.getId());
+
+
+
+                        mServiceOrder.setCustomer(customer);
+
+
+                        SaveServiceOrder saveSO = new SaveServiceOrder();
+                        Boolean create = false;
+                        if (customer.getId() == 0) {
+                            create = true;
+
+                        }
+                        saveSO.execute(mServiceOrder, create);
+                    } else {
+                        returnToFragmentList(null);
+                    }
+                }else {
+                    Toaster.showLong(getActivity(), "Debe seleccionar algúna descripción de falla o casilla de falla.");
+                }
+            }else{
+                Toaster.showLong(getActivity(), "Campos obligatorios: Nombre, Apellido, Celular, Email, Model, Año");
+            }
+        }
+    };
 
     private void returnToFragmentList(ServiceOrder serviceOrder){
 
@@ -307,8 +395,29 @@ public class ServiceOrderFragment extends Fragment {
         }
     }
 
+    public boolean isEmailValid(String email)
+    {
+        String regExpn =
+                "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
+                        +"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
+                        +"([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
+                        +"[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
+                        +"([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$";
 
-    private void setMakesAdapter(){
+        CharSequence inputStr = email;
+
+        Pattern pattern = Pattern.compile(regExpn,Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(inputStr);
+
+        if(matcher.matches())
+            return true;
+        else
+            return false;
+    }
+
+
+    private void setMakesAdapter(ArrayList<String> makes){
         makesAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, makes);
         // Specify the layout to use when the list of choices appears
         makesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -321,7 +430,7 @@ public class ServiceOrderFragment extends Fragment {
         @Override
         protected Object doInBackground(Object[] params) {
 
-           ServiceOrder serviceOrder = (ServiceOrder) params[0];
+            ServiceOrder serviceOrder = (ServiceOrder) params[0];
             Boolean create = false;
             try {
                 create = (Boolean)params[1];
@@ -355,11 +464,11 @@ public class ServiceOrderFragment extends Fragment {
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
 
-            serviceOrder = (ServiceOrder)o;
+            mServiceOrder = (ServiceOrder) o;
 
-            Toaster.showLong(getActivity(), R.string.successfull_so_created);
+            Toaster.showLong(getActivity(), R.string.successfull_operation);
 
-            returnToFragmentList(serviceOrder);
+            returnToFragmentList(mServiceOrder);
 
         }
     }
@@ -375,20 +484,19 @@ public class ServiceOrderFragment extends Fragment {
         @Override
         protected void onPostExecute(Object o) {
 
-
-
-
             makes = (ArrayList<String>)o;
 
-            setMakesAdapter();
+            Collections.sort(makes);
+
 
             SharedPreferences.Editor editor = sharedPreferences.edit();
-
             Set<String> makesSet = new HashSet<String>();
             makesSet.addAll(makes);
 
+            editor.remove(MAKES_SET);
             editor.putStringSet(MAKES_SET, makesSet);
             editor.commit();
+            setMakesAdapter(makes);
 
         }
 

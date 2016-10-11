@@ -19,6 +19,8 @@ public interface ServiceOrdersService {
     @POST(Constants.Http.API_URL+ Constants.Http.URL_SERVICE_ORDERS)
     Call<ResponseBody> newServiceOrder(@Body ServiceOrder serviceOrder);
 
+    /*@POST(Constants.Http.API_URL+ Constants.Http.URL_CUSTOMERS)
+    Call<ResponseBody> newCustomer(@Body Customer customer);*/
 
     @PATCH(Constants.Http.API_URL+Constants.Http.URL_SERVICE_ORDERS+"/{id}")
     Call<ResponseBody> updateServiceOrder(@Path("id") int serviceOrderId,@Body ServiceOrder serviceOrder);

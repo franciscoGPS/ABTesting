@@ -10,8 +10,6 @@ import android.os.Bundle;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
-
 import static android.accounts.AccountManager.KEY_AUTHTOKEN;
 import static com.fcode.core.Constants.Auth.AUTHTOKEN_TYPE;
 import static com.fcode.core.Constants.Auth.BOOTSTRAP_ACCOUNT_TYPE;
@@ -47,6 +45,9 @@ public class ApiKeyProvider {
         final AccountManagerFuture<Bundle> accountManagerFuture
                 = accountManager.getAuthTokenByFeatures(BOOTSTRAP_ACCOUNT_TYPE,
                 AUTHTOKEN_TYPE, new String[0], activity, null, null, null, null);
+
+
+        //TODO: Get user info from AccountManagerFuture, and save them after logging in
 
         return accountManagerFuture.getResult().getString(KEY_AUTHTOKEN);
     }

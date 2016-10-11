@@ -24,10 +24,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -39,7 +35,7 @@ public class BootstrapService {
 
     protected static final String FLASH_SHARED_PREFS = "Flash-u";
 
-    ArrayList<ServiceOrder> serviceOrdersList = null;
+    ArrayList<ServiceOrder> serviceOrderList = null;
 
     ArrayList<String> makes = null;
 
@@ -118,22 +114,29 @@ public class BootstrapService {
     }
 
 
-    public void authenticate(String email, String password) throws IOException {
+    public User authenticate(String email, String password) throws IOException {
 
         UserService userService = getUserService();
 
 
         //To make this work, change back to Call<User> in UserService Interface
-        //Call<User> userCall = userService.authenticate(email, password);
-        //userCall.enqueue(userCallback);
+        Call<ResponseBody> userCall = userService.authenticate(email, password);
+        Response<ResponseBody> response =  userCall.execute();
 
-        Observable<Response<ResponseBody>> observable = userService.authenticate(email, password);
+        user = parseUser(response);
+
+        /*Observable<Response<ResponseBody>> observable = userService.authenticate(email, password);
         observable.observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<Response<ResponseBody>>() {
+
+                    //User user = null;
+
                     @Override
                     public void onCompleted() {
-
+                        int x = 0;
+                        int r = x +2;
+                        //bus.post(user);
                     }
 
                     @Override
@@ -143,12 +146,12 @@ public class BootstrapService {
                     }
 
                     @Override
-                    public void onNext(Response<ResponseBody> respose) {
+                    public void onNext(Response<ResponseBody> response) {
 
 
                         String line;
                         String JSONResponse = "";
-                        BufferedReader br=new BufferedReader(new InputStreamReader(respose.body().byteStream()));
+                        BufferedReader br=new BufferedReader(new InputStreamReader(response.body().byteStream()));
                         try {
                             while ((line=br.readLine()) != null) {
                                 JSONResponse+=line;
@@ -194,22 +197,25 @@ public class BootstrapService {
 
                         }
 
-
-                        bus.post(user);
-
                     }
-                });
+                });*/
 
-
+            return user;
 
     }
+
+
+
+
+
+
 
     public ArrayList<ServiceOrder> getServiceOrders(){
 
         try {
         Response<ResponseBody> response = getServiceOrderService().getServiceOrders().execute();
 
-            serviceOrdersList =(ArrayList<ServiceOrder>) parseResult(response, ServiceOrder.class, true);
+            serviceOrderList =(ArrayList<ServiceOrder>) parseResult(response, ServiceOrder.class, true);
 
 
             /*
@@ -255,39 +261,44 @@ public class BootstrapService {
         }
 
 
-        /*Observable<Response<ResponseBody>> observable = getServiceOrderService().getServiceOrders();
+        /*Observable<Response<ResponseBody>> observable = getServiceOrderService().getService_orders();
         observable.observeOn(AndroidSchedulers.mainThread())
                 //.subscribeOn(Schedulers.io())
                 .subscribe(responseSubscriber);*/
 
-        return serviceOrdersList;
+        return serviceOrderList;
     }
 
-
-
-
     public ServiceOrder createServiceOrder(ServiceOrder serviceOrder){
-        ServiceOrder newServiceOrder = null;
+
+        ServiceOrder updatedServiceOrder = null;
+
         try {
+
+
+
         Response<ResponseBody> response = getServiceOrderService().newServiceOrder(serviceOrder).execute();
-            newServiceOrder = (ServiceOrder) parseResult(response, ServiceOrder.class, false);
+            updatedServiceOrder = (ServiceOrder) parseResult(response, ServiceOrder.class, false);
         }catch (IOException e){
             e.printStackTrace();
         }
 
-        return newServiceOrder;
+        return updatedServiceOrder;
     }
 
     public ServiceOrder updateServiceOrder(ServiceOrder serviceOrder){
-        ServiceOrder newServiceOrder = null;
+        ServiceOrder updatedServiceOrder = null;
         try {
-            Response<ResponseBody> response = getServiceOrderService().updateServiceOrder(serviceOrder.getId(), serviceOrder).execute();
-            newServiceOrder = (ServiceOrder) parseResult(response, ServiceOrder.class, false);
+
+
+            Call<ResponseBody> updateCustomerCall = getServiceOrderService().updateServiceOrder(serviceOrder.getId(), serviceOrder);
+            Response<ResponseBody> response = updateCustomerCall.execute();
+            updatedServiceOrder = (ServiceOrder) parseResult(response, ServiceOrder.class, false);
         }catch (IOException e){
             e.printStackTrace();
         }
 
-        return newServiceOrder;
+        return updatedServiceOrder;
     }
 
     public ArrayList<String> getMakes(String query){
@@ -308,27 +319,81 @@ public class BootstrapService {
 
     }
 
+    private User parseUser(Response<ResponseBody> response){
+        String line,JSONResponse = "";
+        User user = new User();
+        BufferedReader br=new BufferedReader(new InputStreamReader(response.body().byteStream()));
+        try {
+            while ((line=br.readLine()) != null) {
+                JSONResponse+=line;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if(JSONResponse != ""){
+            Map<String,Object> userHash = null;
+            GsonBuilder builder = new GsonBuilder();
+            gson = builder.create();
+
+
+
+            Log.d("FCM", "JSONResponse " + JSONResponse);
+
+
+            Map<String,Object> data = new Gson().fromJson(JSONResponse, Map.class);
+
+            try {
+                userHash = (Map<String,Object>)data.get("data");
+                String s_id = userHash.get("id").toString();
+                Double d_id = Double.parseDouble(s_id);
+
+                user.setId(d_id.intValue());
+                user.setName(userHash.get("name").toString());
+                user.setEmail(userHash.get("email").toString());
+                String phone = userHash.get("phone") != null ? userHash.get("phone").toString() : "";
+                user.setPhone(phone);
+                user.setProvider(userHash.get("provider").toString());
+                String role_id = userHash.get("role_id").toString();
+                Double d_role_id = Double.parseDouble(role_id);
+                user.setRole_id(d_role_id.intValue());
+                user.setUid(userHash.get("uid").toString());
+                user.setAdmin(Boolean.parseBoolean(userHash.get("admin").toString()));
+                user.setSuperadmin(Boolean.parseBoolean(userHash.get("superadmin").toString()));
+
+                //user.setDeleted_at(userHash.get("deleted_at").toString());
+
+
+            }catch (ClassCastException e){
+                Log.e("FCM", e.getMessage());
+            }
+
+        }
+
+        return user;
+    }
+
     private Object parseResult(Response<ResponseBody> response, Object o, Boolean list){
         String line, JSONResponse = "";
 
         Class clazz =  (Class) o;
         Type type = null;
         if( !(o instanceof ArrayList) && !list) {
-            clazz = o.getClass();
+            //clazz = o.getClass();
         }else if(o == String.class && list ){
             type = new TypeToken<ArrayList<String>>() {
             }.getType();
         }else if((o == ServiceOrder.class && list )){
             type = new TypeToken<ArrayList<ServiceOrder>>() {
             }.getType();
+        }else if((o == Customer.class && list )) {
+            type = new TypeToken<ArrayList<Customer>>() {
+            }.getType();
         }
-
-
 
             if (response.errorBody() == null) {
                 try {
                     BufferedReader br = new BufferedReader(new InputStreamReader(response.body().byteStream()));
-
 
                     try {
                         while ((line = br.readLine()) != null) {
@@ -339,8 +404,6 @@ public class BootstrapService {
                     }
 
                     if (JSONResponse != "") {
-
-
                         if(list) {
                             return gson.fromJson(JSONResponse, type);
                         }else {
@@ -348,18 +411,13 @@ public class BootstrapService {
                         }
                         //bus.post(serviceOrdersList);
                     }
-
                 } catch (Exception e) {
                     Timber.d(e.getMessage());
                 }
             }else{
-
             }
 
         return null;
-
-
     }
-
 
 }

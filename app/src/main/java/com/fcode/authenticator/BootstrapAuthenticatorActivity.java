@@ -53,11 +53,20 @@ import static android.accounts.AccountManager.KEY_BOOLEAN_RESULT;
 import static android.view.KeyEvent.ACTION_DOWN;
 import static android.view.KeyEvent.KEYCODE_ENTER;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
+import static com.fcode.core.Constants.Auth.USER;
+import static com.fcode.core.Constants.Auth.USER_EMAIL;
+import static com.fcode.core.Constants.Auth.USER_ID;
+import static com.fcode.core.Constants.Auth.USER_NAME;
+import static com.fcode.core.Constants.Auth.USER_ROLE;
+import static java.util.Locale.US;
+
 
 /**
  * Activity to authenticate the user against an API (example API on Parse.com)
  */
 public class BootstrapAuthenticatorActivity extends ActionBarAccountAuthenticatorActivity {
+
+
 
     /**
      * PARAM_CONFIRM_CREDENTIALS
@@ -94,7 +103,7 @@ public class BootstrapAuthenticatorActivity extends ActionBarAccountAuthenticato
 
     private final TextWatcher watcher = validationTextWatcher();
 
-    private SafeAsyncTask<Boolean> authenticationTask;
+    private SafeAsyncTask<User> authenticationTask;
     private String authToken;
     private String authTokenType;
 
@@ -107,6 +116,8 @@ public class BootstrapAuthenticatorActivity extends ActionBarAccountAuthenticato
     private String email;
 
     private String password;
+
+    private User currentUser;
     /**
      * Was the original caller asking for an entirely new account?
      */
@@ -251,15 +262,15 @@ public class BootstrapAuthenticatorActivity extends ActionBarAccountAuthenticato
         password = "Admin1000.";
         showProgress();
 
-        authenticationTask = new SafeAsyncTask<Boolean>() {
+        authenticationTask = new SafeAsyncTask<User>() {
 
-            public Boolean call() throws Exception {
-
-
-                bootstrapService.authenticate(email, password);
+            public User call() throws Exception {
 
 
-                return true;
+                user = bootstrapService.authenticate(email, password);
+
+
+                return user;
             }
 
             @Override
@@ -275,14 +286,17 @@ public class BootstrapAuthenticatorActivity extends ActionBarAccountAuthenticato
             }
 
             @Override
-            public void onSuccess(Boolean authResult) {
-
+            public void onSuccess(User registered) {
+                user = registered;
             }
 
             @Override
             protected void onFinally() throws RuntimeException {
                 hideProgress();
+
                 authenticationTask = null;
+                onAuthenticationResult(user);
+
             }
         };
 
@@ -305,16 +319,23 @@ public class BootstrapAuthenticatorActivity extends ActionBarAccountAuthenticato
      * request. See onAuthenticationResult(). Sets the
      * AccountAuthenticatorResult which is sent back to the caller.
      *
-     * @param result
+     * @param user
      */
-    protected void finishConfirmCredentials(final boolean result) {
+    protected void finishConfirmCredentials(final User user) {
         final Account account = new Account(email, Constants.Auth.BOOTSTRAP_ACCOUNT_TYPE);
+
         accountManager.setPassword(account, password);
 
+
         final Intent intent = new Intent();
-        intent.putExtra(KEY_BOOLEAN_RESULT, result);
-        setAccountAuthenticatorResult(intent.getExtras());
-        setResult(RESULT_OK, intent);
+        intent.putExtra(KEY_BOOLEAN_RESULT, false);
+        if(user != null){
+            intent.putExtra(USER_EMAIL, email);
+            intent.putExtra(USER, user);
+            intent.putExtra(KEY_BOOLEAN_RESULT, true);
+            setAccountAuthenticatorResult(intent.getExtras());
+            setResult(RESULT_OK, intent);
+        }
         finish();
     }
 
@@ -326,13 +347,13 @@ public class BootstrapAuthenticatorActivity extends ActionBarAccountAuthenticato
      */
 
     protected void finishLogin(final User user) {
+
         final Account account = new Account(email, Constants.Auth.BOOTSTRAP_ACCOUNT_TYPE);
 
-
-
         if (requestNewAccount) {
+            Bundle userBundle = new Bundle();
+            userBundle.putSerializable(USER, user);
             accountManager.addAccountExplicitly(account, password, null);
-
 
         } else {
             accountManager.setPassword(account, password);
@@ -340,11 +361,21 @@ public class BootstrapAuthenticatorActivity extends ActionBarAccountAuthenticato
 
         final Intent intent = new Intent();
         intent.putExtra(KEY_ACCOUNT_NAME, email);
+        //intent.putExtra(USER, user);
         intent.putExtra(KEY_ACCOUNT_TYPE, Constants.Auth.BOOTSTRAP_ACCOUNT_TYPE);
 
 
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(USER_EMAIL, user.getEmail());
+        editor.putInt(USER_ROLE, user.getRole_id());
+        editor.putString(USER_NAME, user.getName());
+        editor.putInt(USER_ID, user.getId());
+        editor.commit();
+
+
+
         if (authTokenType != null
-                && authTokenType.equals(Constants.Auth.AUTHTOKEN_TYPE)) {
+                && authTokenType == Constants.Auth.AUTHTOKEN_TYPE) {
 
 
         }
@@ -380,7 +411,7 @@ public class BootstrapAuthenticatorActivity extends ActionBarAccountAuthenticato
             if (!confirmCredentials) {
                 finishLogin(user);//This is the most used option, for debugging purposes.
             } else {
-                finishConfirmCredentials(true);
+                finishConfirmCredentials(user);
             }
         } else {
             Timber.d("onAuthenticationResult: failed to authenticate");

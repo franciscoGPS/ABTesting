@@ -18,11 +18,11 @@ public class Customer implements Serializable {
     private Timestamp updated_at;
     private Timestamp deleted_at;
     private int user_id;
-    private ServiceOrder serviceOrder;
+
 
 
     public Customer() {
-        serviceOrder = null;
+
         id = 0;
         name = "";
         last_name = "";
@@ -33,11 +33,11 @@ public class Customer implements Serializable {
         deleted_at = null;
         user_id = 0;
 
+
     }
 
     public Customer(int id, int user_id,String name, String last_name, String email,
-                    String phone_number, String cellphone, Timestamp updated_at, Timestamp deleted_at,
-                    ServiceOrder serviceOrder) {
+                    String phone_number, String cellphone, Timestamp updated_at, Timestamp deleted_at) {
         this.name = name;
         this.last_name = last_name;
         this.email = email;
@@ -47,7 +47,7 @@ public class Customer implements Serializable {
         this.deleted_at = deleted_at;
         this.user_id = user_id;
         this.id = id;
-        this.serviceOrder = serviceOrder;
+
     }
 
     public int getId() {
@@ -122,11 +122,22 @@ public class Customer implements Serializable {
         this.user_id = user_id;
     }
 
-    public ServiceOrder getServiceOrder(){
-        return serviceOrder;
+    /*public ArrayList<ServiceOrder> getService_orders() {
+        return service_orders;
+    }
+
+    public void setService_orders(ArrayList<ServiceOrder> service_orders) {
+        this.service_orders = service_orders;
+    }
+
+    public ServiceOrder getServiceOrder(int index){
+        return service_orders.get(index);
     }
 
     public void setServiceOrder(ServiceOrder serviceOrder){
-        this.serviceOrder = serviceOrder;
-    }
+        this.service_orders.clear();
+        this.service_orders.add(serviceOrder);
+
+    }*/
+
 }

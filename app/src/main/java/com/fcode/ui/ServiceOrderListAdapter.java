@@ -1,6 +1,5 @@
 package com.fcode.ui;
 
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -38,9 +37,12 @@ public class ServiceOrderListAdapter extends SingleTypeAdapter<ServiceOrder> {
 
     @Override
     public long getItemId(final int position) {
-        final String id = getItem(position).getId().toString();
+
+        return getItem(position).getId();
+        /*
+        final String id = getItem(position).getId();
         return !TextUtils.isEmpty(id) ? id.hashCode() : super
-                .getItemId(position);
+                .getItemId(position);*/
     }
 
     @Override
@@ -79,7 +81,7 @@ public class ServiceOrderListAdapter extends SingleTypeAdapter<ServiceOrder> {
         //Following id's are the id's in the order of the elements placed in the fragment.
         setText(3, serviceOrder.getMake() +" "+ serviceOrder.getModel());
         setText(2, serviceOrder.getYear() +" "+ serviceOrder.getColor());
-        setText(4, serviceOrder.getDate_in().toString());
+        setText(4, serviceOrder.getCreated_at().toString());
 
     }
 }

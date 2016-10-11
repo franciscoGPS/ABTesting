@@ -48,7 +48,7 @@
     <string name="navigation_drawer_close">Drawer Close</string>
     <string name="title_home">Home</string>
 
-    <string name="successfull_so_created">Vehículo registrado correctamente.</string>
+    <string name="successfull_operation">Operación exitosa.</string>
 
 
 </resources>

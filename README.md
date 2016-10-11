@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Release Notes
 
 ### 2015-10-15
@@ -171,3 +172,7 @@ language translations, unit/integration tests are welcomed and appreciated
 but will be thoroughly reviewed and discussed.
 
 I hope this helps you in building your next android app.
+=======
+# ABTesting
+This app is a modification of http://www.androidbootstrap.com/ with my own modifications to consume another API  
+>>>>>>> 500f0c9fbebbec7eeaa6dae8c4bdfa6280f05240

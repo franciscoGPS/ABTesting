@@ -49,21 +49,21 @@ public class RestAdapterRequestInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
 
-        Request authRequest = request.newBuilder()
-                .addHeader(Constants.Http.AUTH_HEADER_ACCESS_TOKEN, userAgentProvider.getToken())
+        Request authRequest = request.newBuilder().build();
+                /*.addHeader(Constants.Http.AUTH_HEADER_ACCESS_TOKEN, userAgentProvider.getToken())
                 .addHeader(Constants.Http.AUTH_HEADER_CLIENT, userAgentProvider.getClient())
                 .addHeader(Constants.Http.AUTH_HEADER_TOKEN_TYPE, userAgentProvider.getTokenType())
                 .addHeader(Constants.Http.AUTH_HEADER_EXPIRY, userAgentProvider.getExpiry())
-                .addHeader(Constants.Http.AUTH_HEADER_UID, userAgentProvider.getUid()).build();
+                .addHeader(Constants.Http.AUTH_HEADER_UID, userAgentProvider.getUid())*/
 
 
         Response response = chain.proceed(authRequest);
 
-        userAgentProvider.setToken(response.header(Constants.Http.AUTH_HEADER_ACCESS_TOKEN));
+        /*userAgentProvider.setToken(response.header(Constants.Http.AUTH_HEADER_ACCESS_TOKEN));
         userAgentProvider.setTokenType(response.header(Constants.Http.AUTH_HEADER_TOKEN_TYPE));
         userAgentProvider.setClient(response.header(Constants.Http.AUTH_HEADER_CLIENT));
         userAgentProvider.setExpiry(response.header(Constants.Http.AUTH_HEADER_EXPIRY));
-        userAgentProvider.setUid(response.header(Constants.Http.AUTH_HEADER_UID));
+        userAgentProvider.setUid(response.header(Constants.Http.AUTH_HEADER_UID));*/
 
         return response;
     }

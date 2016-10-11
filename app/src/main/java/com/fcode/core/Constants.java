@@ -30,6 +30,28 @@ public final class Constants {
          * Auth token type
          */
         public static final String AUTHTOKEN_TYPE = Http.AUTH_HEADER_TOKEN_TYPE;
+
+        /**
+         * User id
+         */
+        public static final String USER = "user";
+
+        /**
+         * User email
+         */
+        public static final String USER_EMAIL = "user_email";
+        /**
+         * User email
+         */
+        public static final String USER_ID = "user_id";
+        /**
+         * User email
+         */
+        public static final String USER_ROLE = "user_role";
+        /**
+         * User email
+         */
+        public static final String USER_NAME = "user_name";
     }
 
     /**
@@ -57,6 +79,11 @@ public final class Constants {
          * */
         public static final String URL_SERVICE_ORDERS = "/service_orders";
 
+        /**
+         * URL Service Orders
+         * */
+        public static final String URL_CUSTOMERS = "/customers";
+
 
         /**
          * Authentication URL
@@ -72,7 +99,7 @@ public final class Constants {
         public static final String AUTH_HEADER_CLIENT = "client";
         public static final String AUTH_HEADER_ACCESS_TOKEN = "access-token";
         public static final String AUTH_HEADER_TOKEN_TYPE = "token-type";
-        public static final String AUTH_HEADER_EXPIRY = "txpiry";
+        public static final String AUTH_HEADER_EXPIRY = "expiry";
         public static final String AUTH_HEADER_UID = "uid";
         public static final String FLASH_SHARED_PREFS = "Flash-u";
 
@@ -125,6 +152,11 @@ public final class Constants {
         public static final String USER = "user";
 
         public static final String SERVICE_ORDER = "service_order";
+
+        public static final String CUSTOMER = "customer";
+
+        public static final String SERVICE_ORDER_WRAPPER = "service_order_wrapper";
+
 
     }
 

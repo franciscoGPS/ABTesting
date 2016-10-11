@@ -2,7 +2,6 @@ package com.fcode.core;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Date;
 
 /**
  * Created by fcorde on 11/09/16.
@@ -11,8 +10,7 @@ public class ServiceOrder implements Serializable {
 
     private Integer id;
     private String   description;
-    private Date date_in;
-    private Date     date_out;
+    private Timestamp date_out;
     private Timestamp created_at;
     private Timestamp updated_at;
     private Timestamp deleted_at;
@@ -58,10 +56,19 @@ public class ServiceOrder implements Serializable {
     private String   plate;
     private Customer customer;
 
-    public ServiceOrder(Customer customer, int id, String description, Date date_in, Date date_out, Timestamp created_at, Timestamp updated_at, Timestamp deleted_at, Integer user_id, String color, String service_request, String make, String model, Integer year, Boolean win_one, Boolean win_two, Boolean win_three, Boolean win_four, Boolean dl_one, Boolean dl_two, Boolean dl_three, Boolean dl_four, Boolean ft, Boolean ab, Boolean hag, Boolean li, Boolean avna, Boolean hn, Boolean sj, Boolean abs, Boolean sa, Boolean gmg, Boolean fe, Boolean air_bag, Boolean sayda, Boolean lff, Boolean casc, Boolean ses, Boolean sm, Boolean na, Boolean ac, Boolean dx, Boolean sc, Boolean bpa, Boolean af, Boolean cc, Integer customer_id, String plate) {
+
+    public ServiceOrder( int id, String description,  Timestamp date_out, Timestamp created_at,
+                         Timestamp updated_at, Timestamp deleted_at, Integer user_id, String color,
+                         String service_request, String make, String model, Integer year, Boolean win_one,
+                         Boolean win_two, Boolean win_three, Boolean win_four, Boolean dl_one,
+                         Boolean dl_two, Boolean dl_three, Boolean dl_four, Boolean ft, Boolean ab,
+                         Boolean hag, Boolean li, Boolean avna, Boolean hn, Boolean sj, Boolean abs,
+                         Boolean sa, Boolean gmg, Boolean fe, Boolean air_bag, Boolean sayda,
+                         Boolean lff, Boolean casc, Boolean ses, Boolean sm, Boolean na, Boolean ac,
+                         Boolean dx, Boolean sc, Boolean bpa, Boolean af, Boolean cc,
+                         Integer customer_id, String plate, Customer customer) {
         this.id = id;
         this.description = description;
-        this.date_in = date_in;
         this.date_out = date_out;
         this.created_at = created_at;
         this.updated_at = updated_at;
@@ -105,16 +112,16 @@ public class ServiceOrder implements Serializable {
         this.af = af;
         this.cc = cc;
         this.customer_id = customer_id;
-        this.customer = customer;
         this.plate = plate;
+        this.customer = customer;
 
 
     }
 
+
     public ServiceOrder() {
         this.id = 0;
         this.description = "";
-        this.date_in = null;
         this.date_out = null;
         this.created_at = null;
         this.updated_at = null;
@@ -178,19 +185,11 @@ public class ServiceOrder implements Serializable {
         this.description = description;
     }
 
-    public Date getDate_in() {
-        return date_in;
-    }
-
-    public void setDate_in(Date date_in) {
-        this.date_in = date_in;
-    }
-
-    public Date getDate_out() {
+    public Timestamp getDate_out() {
         return date_out;
     }
 
-    public void setDate_out(Date date_out) {
+    public void setDate_out(Timestamp date_out) {
         this.date_out = date_out;
     }
 
@@ -538,11 +537,13 @@ public class ServiceOrder implements Serializable {
         this.plate = plate;
     }
 
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
+    public void setCustomer(Customer customer){
         this.customer = customer;
     }
+
+    public Customer getCustomer(){
+        return this.customer;
+    }
+
+
 }

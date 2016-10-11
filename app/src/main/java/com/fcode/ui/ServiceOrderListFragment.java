@@ -99,12 +99,12 @@ import static com.fcode.core.Constants.Extra.SERVICE_ORDER;
                     if (getActivity() != null) {
                         //if(mServiceOrderList == null) {
 
-                       mServiceOrderList = serviceProvider.getService(getActivity()).getServiceOrders();
+                        mServiceOrderList = serviceProvider.getService(getActivity()).getServiceOrders();
 
                         /*SharedPreferences.Editor editor = sharedPreferences.edit();
                         ArrayList<String> makes =  serviceProvider.getService(getActivity()).getMakes("");
                         editor.putStringSet("makes", (Set<String>)makes);
-                        editor.commit();*/
+                        editor.commçit();*/
 
                         //}
                     }
@@ -141,6 +141,7 @@ import static com.fcode.core.Constants.Extra.SERVICE_ORDER;
         }
 
 
+
         final FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.container, ServiceOrderFragment.newInstance(serviceOrder)).addToBackStack(SERVICE_ORDER)
@@ -151,8 +152,9 @@ import static com.fcode.core.Constants.Extra.SERVICE_ORDER;
         final ServiceOrder serviceOrder = ((ServiceOrder) l.getItemAtPosition(position));
 
 
+        redirectToNewServiceOrder(serviceOrder );
 
-        redirectToNewServiceOrder(serviceOrder);
+
         //startActivity(new Intent(getActivity(), ServiceOrderFragment.class).putExtra(SERVICE_ORDER, serviceOrder));
     }
 
